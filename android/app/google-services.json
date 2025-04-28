@@ -1,0 +1,29 @@
+{
+    "project_info": {
+        "project_number": "634491653430",
+        "project_id": "refresher-2e70d",
+        "storage_bucket": "refresher-2e70d.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:634491653430:android:6d32ade6727aab1873b797",
+                "android_client_info": {
+                    "package_name": "com.example.refresher"
+                }
+            },
+            "oauth_client": [],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyCzhumNuJW6hzy_Tu24mSoVap_fSiGMoLc"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": []
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}
