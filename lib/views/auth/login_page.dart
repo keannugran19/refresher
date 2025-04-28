@@ -23,7 +23,7 @@ class _LoginPageViewState extends State<LoginPageView> {
 
   // when login button is pressed
   void _loginButton() async {
-    Navigator.pushNamed(context, 'home_page');
+    Navigator.pushNamed(context, 'event_list_screen');
     // if (_formKey.currentState!.validate()) {
     //   // Add your login logic here
     //   try {
