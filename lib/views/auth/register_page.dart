@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:refresher/constants/color_scheme.dart';
+import 'package:refresher/components/app_button.dart';
 
 class RegisterPageView extends StatefulWidget {
   const RegisterPageView({super.key});
@@ -23,30 +22,42 @@ class _RegisterPageViewState extends State<RegisterPageView> {
   // password visibility
   bool isPasswordVisible = false;
 
+  // reusable outline input border
+  OutlineInputBorder outlineInputBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(16),
+  );
+
   // when login button is pressed
   void _registerButton() async {
     if (_formKey.currentState!.validate()) {
       // Add your login logic here
-      try {
-        final newUser = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-              email: emailController.text,
-              password: passwordController.text,
-            );
+      // try {
+      //   final newUser = await FirebaseAuth.instance
+      //       .createUserWithEmailAndPassword(
+      //         email: emailController.text,
+      //         password: passwordController.text,
+      //       );
 
-        if (newUser.user != null) {
-          Navigator.pushNamed(context, 'home_page');
-        }
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          print('The password provided is too weak.');
-        } else if (e.code == 'email-already-in-use') {
-          print('The account already exists for that email.');
-        }
-      } catch (e) {
-        print("This is the error: $e");
-      }
+      //   if (newUser.user != null) {
+      //     Navigator.pushNamed(context, 'home_page');
+      //   }
+      // } on FirebaseAuthException catch (e) {
+      //   if (e.code == 'weak-password') {
+      //     print('The password provided is too weak.');
+      //   } else if (e.code == 'email-already-in-use') {
+      //     print('The account already exists for that email.');
+      //   }
+      // } catch (e) {
+      //   print("This is the error: $e");
+      // }
     }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -100,9 +111,7 @@ class _RegisterPageViewState extends State<RegisterPageView> {
                 controller: emailController,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  border: outlineInputBorder,
                   hintText: 'Email',
                 ),
                 validator: (value) {
@@ -136,9 +145,7 @@ class _RegisterPageViewState extends State<RegisterPageView> {
                           : Icons.visibility_off,
                     ),
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  border: outlineInputBorder,
                   hintText: 'Password',
                 ),
                 validator: (value) {
@@ -172,9 +179,7 @@ class _RegisterPageViewState extends State<RegisterPageView> {
                           : Icons.visibility_off,
                     ),
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  border: outlineInputBorder,
                   hintText: 'Confirm Password',
                 ),
                 validator: (value) {
@@ -187,20 +192,7 @@ class _RegisterPageViewState extends State<RegisterPageView> {
               SizedBox(height: 20),
 
               // login button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _registerButton,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text('Register', style: TextStyle(fontSize: 16)),
-                ),
-              ),
+              AppButton(onPressed: _registerButton, buttonText: "Register"),
 
               // forgot password & remember
               Row(

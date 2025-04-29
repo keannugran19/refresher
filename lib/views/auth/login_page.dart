@@ -1,6 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:refresher/constants/color_scheme.dart';
+import 'package:refresher/components/app_button.dart';
 
 class LoginPageView extends StatefulWidget {
   const LoginPageView({super.key});
@@ -20,6 +19,11 @@ class _LoginPageViewState extends State<LoginPageView> {
   final passwordController = TextEditingController();
 
   bool isPasswordVisible = false;
+
+  // reusable outline input border
+  OutlineInputBorder outlineInputBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(16),
+  );
 
   // when login button is pressed
   void _loginButton() async {
@@ -45,6 +49,13 @@ class _LoginPageViewState extends State<LoginPageView> {
     //     print("This is the error: $e");
     //   }
     // }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -79,9 +90,7 @@ class _LoginPageViewState extends State<LoginPageView> {
                 controller: emailController,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  border: outlineInputBorder,
                   hintText: 'Email',
                 ),
                 validator: (value) {
@@ -115,9 +124,7 @@ class _LoginPageViewState extends State<LoginPageView> {
                           : Icons.visibility_off,
                     ),
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  border: outlineInputBorder,
                   hintText: 'Password',
                 ),
                 validator: (value) {
@@ -134,20 +141,7 @@ class _LoginPageViewState extends State<LoginPageView> {
               SizedBox(height: 20),
 
               // login button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _loginButton,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text('Login', style: TextStyle(fontSize: 16)),
-                ),
-              ),
+              AppButton(onPressed: _loginButton, buttonText: "Login"),
 
               // forgot password & remember
               Row(
