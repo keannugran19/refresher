@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refresher/components/app_button.dart';
+import 'package:refresher/services/auth_service.dart';
 
 class RegisterPageView extends StatefulWidget {
   const RegisterPageView({super.key});
@@ -30,26 +31,18 @@ class _RegisterPageViewState extends State<RegisterPageView> {
   // when login button is pressed
   void _registerButton() async {
     if (_formKey.currentState!.validate()) {
-      // Add your login logic here
-      // try {
-      //   final newUser = await FirebaseAuth.instance
-      //       .createUserWithEmailAndPassword(
-      //         email: emailController.text,
-      //         password: passwordController.text,
-      //       );
-
-      //   if (newUser.user != null) {
-      //     Navigator.pushNamed(context, 'home_page');
-      //   }
-      // } on FirebaseAuthException catch (e) {
-      //   if (e.code == 'weak-password') {
-      //     print('The password provided is too weak.');
-      //   } else if (e.code == 'email-already-in-use') {
-      //     print('The account already exists for that email.');
-      //   }
-      // } catch (e) {
-      //   print("This is the error: $e");
-      // }
+      try {
+        final result = await AuthService.register(
+          nameController.text,
+          emailController.text,
+          passwordController.text,
+        );
+        print("Registration successful: $result");
+        // TODO add functionality that redirects to events list page
+        // TODO add validation errors from backend
+      } catch (e) {
+        print("This is the error: $e");
+      }
     }
   }
 
@@ -88,23 +81,23 @@ class _RegisterPageViewState extends State<RegisterPageView> {
               SizedBox(height: 20),
 
               // name field
-              // TextFormField(
-              //   controller: nameController,
-              //   decoration: InputDecoration(
-              //     prefixIcon: Icon(Icons.account_circle_sharp),
-              //     border: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(16),
-              //     ),
-              //     hintText: 'Name',
-              //   ),
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return "Please enter your name";
-              //     }
-              //     return null;
-              //   },
-              // ),
-              // SizedBox(height: 20),
+              TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.account_circle_sharp),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  hintText: 'Name',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please enter your name";
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
 
               // email field
               TextFormField(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refresher/components/app_button.dart';
+import 'package:refresher/services/auth_service.dart';
 
 class LoginPageView extends StatefulWidget {
   const LoginPageView({super.key});
@@ -27,28 +28,19 @@ class _LoginPageViewState extends State<LoginPageView> {
 
   // when login button is pressed
   void _loginButton() async {
-    Navigator.pushNamed(context, 'event_list_screen');
-    // if (_formKey.currentState!.validate()) {
-    //   // Add your login logic here
-    //   try {
-    //     final user = await FirebaseAuth.instance.signInWithEmailAndPassword(
-    //       email: emailController.text,
-    //       password: passwordController.text,
-    //     );
-
-    //     if (user.user != null) {
-
-    //     }
-    //   } on FirebaseAuthException catch (e) {
-    //     if (e.code == 'weak-password') {
-    //       print('The password provided is too weak.');
-    //     } else if (e.code == 'email-already-in-use') {
-    //       print('The account already exists for that email.');
-    //     }
-    //   } catch (e) {
-    //     print("This is the error: $e");
-    //   }
-    // }
+    if (_formKey.currentState!.validate()) {
+      try {
+        final result = await AuthService.login(
+          emailController.text,
+          passwordController.text,
+        );
+        print("Login successful: $result");
+        // TODO add functionality that redirects to events list page
+        // TODO add validation errors from backend
+      } catch (e) {
+        print("This is the error: $e");
+      }
+    }
   }
 
   @override
