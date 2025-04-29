@@ -81,6 +81,7 @@ class _EventListScreenState extends State<EventListScreen> {
           ],
         ),
       ),
+      floatingActionButton: _floatingActionButton(),
     );
   }
 
@@ -125,6 +126,15 @@ class _EventListScreenState extends State<EventListScreen> {
           });
         },
       ),
+    );
+  }
+
+  Widget _floatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () {
+        Navigator.pushNamed(context, 'create_event_screen');
+      },
+      child: Icon(Icons.create),
     );
   }
 }
