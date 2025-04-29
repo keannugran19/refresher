@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refresher/constants/color_scheme.dart';
+import 'package:refresher/views/events/edit_event_screen.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   final String eventTitle;
@@ -22,9 +23,43 @@ class EventDetailsScreen extends StatelessWidget {
         foregroundColor: primaryFgColor,
         actions: [
           // edit button
-          IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditEventScreen()),
+              );
+            },
+            icon: Icon(Icons.edit),
+          ),
           // delete button
-          IconButton(onPressed: () {}, icon: Icon(Icons.delete)),
+          IconButton(
+            onPressed:
+                () => showDialog<String>(
+                  context: context,
+                  builder:
+                      (BuildContext context) => AlertDialog(
+                        title: const Text('Delete event?'),
+                        content: const Text(
+                          'Are you sure? This cannot be undone!',
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'OK'),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                ),
+            icon: Icon(Icons.delete),
+          ),
         ],
       ),
       body: SingleChildScrollView(
