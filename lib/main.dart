@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:refresher/constants/theme_data.dart';
 import 'package:refresher/views/auth/login_page.dart';
 import 'package:refresher/views/auth/register_page.dart';
+import 'package:refresher/views/events/create_event_screen.dart';
 import 'package:refresher/views/events/event_details_screen.dart';
 import 'package:refresher/views/events/event_list_screen.dart';
 import 'package:refresher/views/landing_page.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         'registration_page': (context) => RegisterPageView(),
         'event_list_screen': (context) => EventListScreen(),
         'landing_page': (context) => LandingPageView(),
+        'create_event_screen': (context) => CreateEventScreen(),
       },
       debugShowCheckedModeBanner: false,
       title: 'Refresher',
