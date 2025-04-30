@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:refresher/constants/color_scheme.dart';
+import 'package:refresher/services/event_service.dart';
 
 class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({super.key});
@@ -12,10 +14,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   // form key
   final _formKey = GlobalKey<FormState>();
   // textfield controllers
-  final eventTitleController = TextEditingController();
-  final eventDescriptionController = TextEditingController();
-  final eventLocationController = TextEditingController();
-  final eventDateController = TextEditingController();
+  final TextEditingController eventTitleController = TextEditingController();
+  final TextEditingController eventDescriptionController =
+      TextEditingController();
+  final TextEditingController eventLocationController = TextEditingController();
+  final TextEditingController eventDateController = TextEditingController();
 
   // selectdate var
   DateTime? selectedDate;
@@ -45,18 +48,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         foregroundColor: primaryFgColor,
         actions: [
           // create button
-          IconButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processing Data')),
-                );
-              }
-            },
-            icon: Icon(Icons.add),
-          ),
+          IconButton(onPressed: _createEvent, icon: Icon(Icons.add)),
         ],
       ),
       body: SingleChildScrollView(
@@ -76,6 +68,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   spacing: cpSpace,
                   children: [
                     TextFormField(
+                      controller: eventTitleController,
                       decoration: InputDecoration(
                         border: outlineInputBorder,
                         hintText: 'Enter event title...',
@@ -89,6 +82,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     ),
                     // event description field
                     TextFormField(
+                      controller: eventDescriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(
                         border: outlineInputBorder,
@@ -102,26 +96,24 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       },
                     ),
                     // event date picker
-                    TextFormField(
-                      controller: eventDateController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        border: outlineInputBorder,
-                        hintText: 'No date selected',
-                        suffixIcon: IconButton(
-                          onPressed: _selectDate,
-                          icon: Icon(Icons.date_range),
-                        ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a date';
-                        }
-                        return null;
-                      },
+                      child: ListTile(
+                        title: Text(
+                          selectedDate == null
+                              ? "Pick a date"
+                              : "Date: ${DateFormat('MMMM d, y').format(selectedDate!)}",
+                        ),
+                        trailing: Icon(Icons.calendar_today),
+                        onTap: _selectDate,
+                      ),
                     ),
                     // location field
                     TextFormField(
+                      controller: eventLocationController,
                       decoration: InputDecoration(
                         border: outlineInputBorder,
                         hintText: 'Enter event location...',
@@ -171,18 +163,46 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     );
   }
 
+  // pass the form
+  Future<void> _createEvent() async {
+    if (_formKey.currentState!.validate()) {
+      final success = await EventService.addEvent({
+        'title': eventTitleController.text.trim(),
+        'description': eventDescriptionController.text.trim(),
+        'location': eventLocationController.text.trim(),
+        'date': selectedDate!.toIso8601String().split('T')[0],
+      });
+      if (selectedDate == null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Please pick a date")));
+        return;
+      }
+      if (success) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Event added")));
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Failed to add event")));
+      }
+    }
+  }
+
   // select date function
   Future<void> _selectDate() async {
-    final DateTime? pickedDate = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
     );
-
-    setState(() {
-      String selectedDate =
-          "${pickedDate?.month}-${pickedDate?.day}-${pickedDate?.year}";
-      eventDateController.text = selectedDate;
-    });
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
   }
 }
