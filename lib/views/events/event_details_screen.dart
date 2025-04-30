@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:refresher/constants/color_scheme.dart';
+import 'package:refresher/services/event_service.dart';
 import 'package:refresher/views/events/edit_event_screen.dart';
 
 class EventDetailsScreen extends StatelessWidget {
-  final String eventTitle;
-  final String eventDescription;
-  final String eventDate;
-  final String eventLocation;
-  const EventDetailsScreen({
-    super.key,
-    required this.eventTitle,
-    required this.eventDescription,
-    required this.eventDate,
-    required this.eventLocation,
-  });
+  final int eventId;
+
+  const EventDetailsScreen({super.key, required this.eventId});
 
   @override
   Widget build(BuildContext context) {
@@ -63,20 +57,42 @@ class EventDetailsScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // event title section
-            _eventTitle(),
-            // other information section
-            _otherEventInfo(),
-          ],
+        child: FutureBuilder(
+          future: EventService.fetchEvent(eventId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            } else {
+              final event = snapshot.data!;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // event title section
+                  _eventTitle(event['title']),
+                  // other information section
+                  _otherEventInfo(
+                    event['description'],
+                    event['location'],
+                    formatDate(event['date']),
+                  ),
+                ],
+              );
+            }
+          },
         ),
       ),
     );
   }
 
-  Widget _eventTitle() {
+  // format date
+  String formatDate(String mysqlDate) {
+    DateTime date = DateTime.parse(mysqlDate);
+    return DateFormat('MMMM d, y').format(date);
+  }
+
+  Widget _eventTitle(String eventTitle) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(color: primaryColor),
@@ -104,7 +120,13 @@ class EventDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _otherEventInfo() {
+  Widget _otherEventInfo(
+    String eventDescription,
+    String eventLocation,
+    String eventDate,
+  ) {
+    final double fontSize = 16;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 30),
       child: Column(
@@ -114,21 +136,21 @@ class EventDetailsScreen extends StatelessWidget {
           // about
           Text(
             'About Event',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize),
           ),
           Text(eventDescription),
           SizedBox(height: 10),
           // location
           Text(
             'Location',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize),
           ),
           Text(eventLocation),
           SizedBox(height: 10),
           // date
           Text(
             'Date',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize),
           ),
           Text(eventDate),
         ],
