@@ -62,4 +62,26 @@ class AuthService {
     );
     prefs.remove("token");
   }
+
+  static Future<bool> isAuthenticated() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("token");
+
+    if (token == null) {
+      return false;
+    }
+
+    final response = await http.get(
+      Uri.parse(
+        "${Config.apiBaseUrl}/user",
+      ), // Change to your auth-check endpoint
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

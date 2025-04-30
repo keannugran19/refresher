@@ -7,6 +7,7 @@ import 'package:refresher/views/events/event_details_screen.dart';
 import 'package:refresher/views/events/event_list_screen.dart';
 import 'package:refresher/views/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:refresher/views/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,8 +22,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: 'landing_page',
+      initialRoute: 'splash_screen',
       routes: {
+        'splash_screen': (context) => SplashScreen(),
         'login_page': (context) => LoginPageView(),
         'registration_page': (context) => RegisterPageView(),
         'event_list_screen': (context) => EventListScreen(),

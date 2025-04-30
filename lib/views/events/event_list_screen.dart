@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:refresher/components/event_card.dart';
 import 'package:refresher/constants/color_scheme.dart';
