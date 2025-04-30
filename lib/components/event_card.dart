@@ -49,8 +49,11 @@ class EventCardWidget extends StatelessWidget {
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                   Text(
+                    textAlign: TextAlign.end,
                     eventLocation,
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
