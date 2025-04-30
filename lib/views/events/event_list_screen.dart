@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:refresher/components/event_card.dart';
 import 'package:refresher/constants/color_scheme.dart';
+import 'package:refresher/services/auth_service.dart';
 import 'package:refresher/views/events/event_details_screen.dart';
 
 class EventListScreen extends StatefulWidget {
@@ -16,10 +17,10 @@ class _EventListScreenState extends State<EventListScreen> {
   Widget build(BuildContext context) {
     // logout functionality
     void logout() async {
-      await FirebaseAuth.instance.signOut();
+      await AuthService.logout();
 
       if (context.mounted) {
-        Navigator.pushNamed(context, 'landing_page');
+        Navigator.pushReplacementNamed(context, 'landing_page');
       }
     }
 

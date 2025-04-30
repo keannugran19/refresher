@@ -26,23 +26,6 @@ class _LoginPageViewState extends State<LoginPageView> {
     borderRadius: BorderRadius.circular(16),
   );
 
-  // when login button is pressed
-  void _loginButton() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        final result = await AuthService.login(
-          emailController.text,
-          passwordController.text,
-        );
-        print("Login successful: $result");
-        // TODO add functionality that redirects to events list page
-        // TODO add validation errors from backend
-      } catch (e) {
-        print("This is the error: $e");
-      }
-    }
-  }
-
   @override
   void dispose() {
     emailController.dispose();
@@ -160,5 +143,35 @@ class _LoginPageViewState extends State<LoginPageView> {
         ),
       ),
     );
+  }
+
+  // when login button is pressed
+  void _loginButton() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final result = await AuthService.login(
+          emailController.text,
+          passwordController.text,
+        );
+
+        if (result.containsKey("access_token")) {
+          Navigator.pushReplacementNamed(context, 'event_list_screen');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red,
+              content: Text("Invalid Credentials"),
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text("An error occurred"),
+          ),
+        );
+      }
+    }
   }
 }

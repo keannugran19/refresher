@@ -28,24 +28,6 @@ class _RegisterPageViewState extends State<RegisterPageView> {
     borderRadius: BorderRadius.circular(16),
   );
 
-  // when login button is pressed
-  void _registerButton() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        final result = await AuthService.register(
-          nameController.text,
-          emailController.text,
-          passwordController.text,
-        );
-        print("Registration successful: $result");
-        // TODO add functionality that redirects to events list page
-        // TODO add validation errors from backend
-      } catch (e) {
-        print("This is the error: $e");
-      }
-    }
-  }
-
   @override
   void dispose() {
     emailController.dispose();
@@ -212,5 +194,36 @@ class _RegisterPageViewState extends State<RegisterPageView> {
         ),
       ),
     );
+  }
+
+  // when login button is pressed
+  void _registerButton() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final result = await AuthService.register(
+          nameController.text,
+          emailController.text,
+          passwordController.text,
+        );
+
+        if (result.containsValue("User registered successfully")) {
+          Navigator.pushReplacementNamed(context, 'event_list_screen');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red,
+              content: Text("Account creation failed"),
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text("Registration failed"),
+          ),
+        );
+      }
+    }
   }
 }
