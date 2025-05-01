@@ -38,7 +38,7 @@ class _EventListScreenState extends State<EventListScreen> {
         scrolledUnderElevation: 0,
         actions: [
           IconButton(
-            onPressed: logout,
+            onPressed: isAuthenticated == false ? _login : _userProfile,
             icon: Icon(Icons.account_circle_outlined),
           ),
         ],
@@ -141,13 +141,13 @@ class _EventListScreenState extends State<EventListScreen> {
     );
   }
 
-  // logout functionality
-  void logout() async {
-    await AuthService.logout();
+  // redirect to user profile
+  void _userProfile() {
+    Navigator.pushNamed(context, 'user_profile_screen');
+  }
 
-    if (context.mounted) {
-      Navigator.pushReplacementNamed(context, 'landing_page');
-    }
+  void _login() {
+    Navigator.pushReplacementNamed(context, 'landing_page');
   }
 
   // check if user is authenticated
