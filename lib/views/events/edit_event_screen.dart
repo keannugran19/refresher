@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:refresher/constants/color_scheme.dart';
+import 'package:refresher/services/event_service.dart';
 
 class EditEventScreen extends StatefulWidget {
-  const EditEventScreen({super.key});
+  final int eventId;
+  const EditEventScreen({super.key, required this.eventId});
 
   @override
   State<EditEventScreen> createState() => _EditEventScreenState();
@@ -11,14 +14,39 @@ class EditEventScreen extends StatefulWidget {
 class _EditEventScreenState extends State<EditEventScreen> {
   // form key
   final _formKey = GlobalKey<FormState>();
+
+  // loading
+  bool isLoading = true;
+
   // textfield controllers
-  final eventTitleController = TextEditingController();
-  final eventDescriptionController = TextEditingController();
-  final eventLocationController = TextEditingController();
-  final eventDateController = TextEditingController();
+  late TextEditingController eventTitleController;
+  late TextEditingController eventDescriptionController;
+  late TextEditingController eventLocationController;
+  late TextEditingController eventDateController;
 
   // selectdate var
   DateTime? selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    eventTitleController = TextEditingController();
+    eventDescriptionController = TextEditingController();
+    eventLocationController = TextEditingController();
+    eventDateController = TextEditingController();
+    _loadEvent();
+  }
+
+  Future<void> _loadEvent() async {
+    final event = await EventService.fetchEvent(widget.eventId);
+    setState(() {
+      eventTitleController.text = event['title'];
+      eventDescriptionController.text = event['description'];
+      eventLocationController.text = event['location'];
+      selectedDate = DateTime.parse(event['date']);
+      isLoading = false;
+    });
+  }
 
   // reusable outline input border
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
@@ -39,24 +67,15 @@ class _EditEventScreenState extends State<EditEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) return const Center(child: CircularProgressIndicator());
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
         foregroundColor: primaryFgColor,
         actions: [
           // create button
-          IconButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processing Data')),
-                );
-              }
-            },
-            icon: Icon(Icons.edit),
-          ),
+          IconButton(onPressed: _editEvent, icon: Icon(Icons.edit)),
         ],
       ),
       body: SingleChildScrollView(
@@ -76,6 +95,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   spacing: cpSpace,
                   children: [
                     TextFormField(
+                      controller: eventTitleController,
                       decoration: InputDecoration(
                         border: outlineInputBorder,
                         hintText: 'Enter event title...',
@@ -89,6 +109,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                     ),
                     // event description field
                     TextFormField(
+                      controller: eventDescriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(
                         border: outlineInputBorder,
@@ -102,26 +123,24 @@ class _EditEventScreenState extends State<EditEventScreen> {
                       },
                     ),
                     // event date picker
-                    TextFormField(
-                      controller: eventDateController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        border: outlineInputBorder,
-                        hintText: 'No date selected',
-                        suffixIcon: IconButton(
-                          onPressed: _selectDate,
-                          icon: Icon(Icons.date_range),
-                        ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a date';
-                        }
-                        return null;
-                      },
+                      child: ListTile(
+                        title: Text(
+                          selectedDate == null
+                              ? "Pick a date"
+                              : "Date: ${DateFormat('MMMM d, y').format(selectedDate!)}",
+                        ),
+                        trailing: Icon(Icons.calendar_today),
+                        onTap: _selectDate,
+                      ),
                     ),
                     // location field
                     TextFormField(
+                      controller: eventLocationController,
                       decoration: InputDecoration(
                         border: outlineInputBorder,
                         hintText: 'Enter event location...',
@@ -171,18 +190,48 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
+  // edit the form
+  Future<void> _editEvent() async {
+    if (_formKey.currentState!.validate()) {
+      final success = await EventService.updateEvent({
+        'title': eventTitleController.text.trim(),
+        'description': eventDescriptionController.text.trim(),
+        'location': eventLocationController.text.trim(),
+        'date': selectedDate!.toIso8601String().split('T')[0],
+      }, widget.eventId);
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Event updated"),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // refresh event
+        Navigator.pop(context, true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to update event"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   // select date function
   Future<void> _selectDate() async {
-    final DateTime? pickedDate = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
     );
-
-    setState(() {
-      String selectedDate =
-          "${pickedDate?.month}-${pickedDate?.day}-${pickedDate?.year}";
-      eventDateController.text = selectedDate;
-    });
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
   }
 }

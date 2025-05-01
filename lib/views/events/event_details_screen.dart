@@ -4,10 +4,17 @@ import 'package:refresher/constants/color_scheme.dart';
 import 'package:refresher/services/event_service.dart';
 import 'package:refresher/views/events/edit_event_screen.dart';
 
-class EventDetailsScreen extends StatelessWidget {
+class EventDetailsScreen extends StatefulWidget {
   final int eventId;
 
   const EventDetailsScreen({super.key, required this.eventId});
+
+  @override
+  State<EventDetailsScreen> createState() => _EventDetailsScreenState();
+}
+
+class _EventDetailsScreenState extends State<EventDetailsScreen> {
+  late Map<String, dynamic> event;
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +25,18 @@ class EventDetailsScreen extends StatelessWidget {
         actions: [
           // edit button
           IconButton(
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              final updated = await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => EditEventScreen()),
+                MaterialPageRoute(
+                  builder:
+                      (context) => EditEventScreen(eventId: widget.eventId),
+                ),
               );
+
+              if (updated == true) {
+                _loadEvent();
+              }
             },
             icon: Icon(Icons.edit),
           ),
@@ -43,7 +57,27 @@ class EventDetailsScreen extends StatelessWidget {
                             child: const Text('Cancel'),
                           ),
                           TextButton(
-                            onPressed: () => Navigator.pop(context, 'OK'),
+                            onPressed: () async {
+                              final deleted = await EventService.deleteEvent(
+                                widget.eventId,
+                              );
+                              if (deleted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Event successfully deleted"),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Failed to delete event"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                              Navigator.pushNamed(context, 'event_list_screen');
+                            },
                             child: const Text(
                               'Delete',
                               style: TextStyle(color: Colors.red),
@@ -58,7 +92,7 @@ class EventDetailsScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: FutureBuilder(
-          future: EventService.fetchEvent(eventId),
+          future: EventService.fetchEvent(widget.eventId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -84,6 +118,14 @@ class EventDetailsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // refresh event when successfully updated
+  Future<void> _loadEvent() async {
+    final event = await EventService.fetchEvent(widget.eventId);
+    setState(() {
+      this.event = event;
+    });
   }
 
   // format date

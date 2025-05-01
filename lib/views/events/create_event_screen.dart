@@ -172,21 +172,18 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         'location': eventLocationController.text.trim(),
         'date': selectedDate!.toIso8601String().split('T')[0],
       });
-      if (selectedDate == null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Please pick a date")));
-        return;
-      }
       if (success) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Event added")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Event added"), backgroundColor: Colors.green),
+        );
         Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Failed to add event")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to add event"),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

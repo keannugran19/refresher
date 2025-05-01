@@ -56,4 +56,40 @@ class EventService {
 
     return response.statusCode == 201;
   }
+
+  // update and event
+  static Future<bool> updateEvent(
+    Map<String, dynamic> eventData,
+    int eventId,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    final response = await http.put(
+      Uri.parse('${Config.apiBaseUrl}/events/$eventId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(eventData),
+    );
+
+    return response.statusCode == 201;
+  }
+
+  // delete an event
+  static Future<bool> deleteEvent(int eventId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    final response = await http.delete(
+      Uri.parse('${Config.apiBaseUrl}/events/$eventId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    return response.statusCode == 201;
+  }
 }
