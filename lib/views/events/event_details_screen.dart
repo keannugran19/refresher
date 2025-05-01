@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:refresher/constants/color_scheme.dart';
-import 'package:refresher/services/auth_service.dart';
 import 'package:refresher/services/event_service.dart';
 import 'package:refresher/views/events/edit_event_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
