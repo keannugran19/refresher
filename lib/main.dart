@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:refresher/constants/theme_data.dart';
 import 'package:refresher/views/auth/login_page.dart';
 import 'package:refresher/views/auth/register_page.dart';
+import 'package:refresher/views/auth/user_profile.dart';
 import 'package:refresher/views/events/create_event_screen.dart';
 import 'package:refresher/views/events/event_list_screen.dart';
 import 'package:refresher/views/landing_page.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: 'event_list_screen',
       routes: {
+        'user_profile_screen': (context) => UserProfileScreen(),
         'splash_screen': (context) => SplashScreen(),
         'login_page': (context) => LoginPageView(),
         'registration_page': (context) => RegisterPageView(),
