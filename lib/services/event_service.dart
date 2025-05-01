@@ -42,19 +42,23 @@ class EventService {
 
   // add new event
   static Future<bool> addEvent(Map<String, dynamic> eventData) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
-    final response = await http.post(
-      Uri.parse('${Config.apiBaseUrl}/events/store'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(eventData),
-    );
+      final response = await http.post(
+        Uri.parse('${Config.apiBaseUrl}/events/store'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(eventData),
+      );
 
-    return response.statusCode == 201;
+      return response.statusCode == 201;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   // update and event
@@ -62,34 +66,42 @@ class EventService {
     Map<String, dynamic> eventData,
     int eventId,
   ) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
-    final response = await http.put(
-      Uri.parse('${Config.apiBaseUrl}/events/$eventId'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(eventData),
-    );
+      final response = await http.put(
+        Uri.parse('${Config.apiBaseUrl}/events/$eventId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(eventData),
+      );
 
-    return response.statusCode == 201;
+      return response.statusCode == 201;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   // delete an event
   static Future<bool> deleteEvent(int eventId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
-    final response = await http.delete(
-      Uri.parse('${Config.apiBaseUrl}/events/$eventId'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+      final response = await http.delete(
+        Uri.parse('${Config.apiBaseUrl}/events/$eventId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-    return response.statusCode == 201;
+      return response.statusCode == 201;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

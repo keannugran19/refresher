@@ -73,7 +73,10 @@ class _EventListScreenState extends State<EventListScreen> {
                           context,
                           MaterialPageRoute(
                             builder:
-                                (_) => EventDetailsScreen(eventId: event['id']),
+                                (_) => EventDetailsScreen(
+                                  eventId: event['id'],
+                                  userId: event['user_id'],
+                                ),
                           ),
                         );
                       },

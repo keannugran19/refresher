@@ -20,9 +20,6 @@ class AuthService {
       }),
     );
 
-    print("Status code: ${response.statusCode}");
-    print("Response body: ${response.body}");
-
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 201) {
@@ -42,14 +39,15 @@ class AuthService {
       body: jsonEncode({"email": email, "password": password}),
     );
 
-    print("Status code: ${response.statusCode}");
-    print("Response body: ${response.body}");
-
     final data = jsonDecode(response.body);
-    if (response.statusCode == 200 && data.containsKey("access_token")) {
+    if (response.statusCode == 200) {
+      final userId = data['user_id'];
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("token", data["access_token"]);
+      prefs.setInt("user_id", userId);
     }
+
     return data;
   }
 
@@ -63,6 +61,24 @@ class AuthService {
     prefs.remove("token");
   }
 
+  static Future<Map<String, dynamic>> getUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("${Config.apiBaseUrl}/user"),
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (response.statusCode == 200) {
+      final decodedData = jsonDecode(response.body);
+
+      return decodedData;
+    } else {
+      throw Exception("Failed to load event: ${response.statusCode}");
+    }
+  }
+
   static Future<bool> isAuthenticated() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("token");
@@ -72,9 +88,7 @@ class AuthService {
     }
 
     final response = await http.get(
-      Uri.parse(
-        "${Config.apiBaseUrl}/user",
-      ), // Change to your auth-check endpoint
+      Uri.parse("${Config.apiBaseUrl}/user"),
       headers: {"Authorization": "Bearer $token"},
     );
 

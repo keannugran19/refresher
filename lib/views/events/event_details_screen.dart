@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:refresher/constants/color_scheme.dart';
+import 'package:refresher/services/auth_service.dart';
 import 'package:refresher/services/event_service.dart';
 import 'package:refresher/views/events/edit_event_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EventDetailsScreen extends StatefulWidget {
   final int eventId;
+  final int userId;
 
-  const EventDetailsScreen({super.key, required this.eventId});
+  const EventDetailsScreen({
+    super.key,
+    required this.eventId,
+    required this.userId,
+  });
 
   @override
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
@@ -16,6 +23,33 @@ class EventDetailsScreen extends StatefulWidget {
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
   late Map<String, dynamic> event;
 
+  bool isOwner = false;
+
+  // check user ownership of event
+  Future<void> _checkOwnership() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    int? currentUserId = prefs.getInt('user_id');
+
+    if (token == null ||
+        currentUserId == null ||
+        currentUserId != widget.userId) {
+      setState(() {
+        isOwner = false;
+      });
+    } else {
+      setState(() {
+        isOwner = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOwnership();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,71 +57,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         backgroundColor: primaryColor,
         foregroundColor: primaryFgColor,
         actions: [
-          // edit button
-          IconButton(
-            onPressed: () async {
-              final updated = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => EditEventScreen(eventId: widget.eventId),
-                ),
-              );
-
-              if (updated == true) {
-                _loadEvent();
-              }
-            },
-            icon: Icon(Icons.edit),
-          ),
-          // delete button
-          IconButton(
-            onPressed:
-                () => showDialog<String>(
-                  context: context,
-                  builder:
-                      (BuildContext context) => AlertDialog(
-                        title: const Text('Delete event?'),
-                        content: const Text(
-                          'Are you sure? This cannot be undone!',
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, 'Cancel'),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              final deleted = await EventService.deleteEvent(
-                                widget.eventId,
-                              );
-                              if (deleted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Event successfully deleted"),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Failed to delete event"),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                              Navigator.pushNamed(context, 'event_list_screen');
-                            },
-                            child: const Text(
-                              'Delete',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        ],
-                      ),
-                ),
-            icon: Icon(Icons.delete),
-          ),
+          if (isOwner)
+            // edit button
+            IconButton(onPressed: _editEvent, icon: Icon(Icons.edit)),
+          if (isOwner)
+            // delete button
+            IconButton(onPressed: _deleteDialog, icon: Icon(Icons.delete)),
         ],
       ),
       body: SingleChildScrollView(
@@ -133,6 +108,58 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     DateTime date = DateTime.parse(mysqlDate);
     return DateFormat('MMMM d, y').format(date);
   }
+
+  // go to edit screen
+  Future<void> _editEvent() async {
+    final updated = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditEventScreen(eventId: widget.eventId),
+      ),
+    );
+
+    if (updated == true) {
+      _loadEvent();
+    }
+  }
+
+  // confirm deletion dialog
+  Future<String?> _deleteDialog() => showDialog<String>(
+    context: context,
+    builder:
+        (BuildContext context) => AlertDialog(
+          title: const Text('Delete event?'),
+          content: const Text('Are you sure? This cannot be undone!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final deleted = await EventService.deleteEvent(widget.eventId);
+                if (deleted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Event successfully deleted"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Failed to delete event"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+                Navigator.pushNamed(context, 'event_list_screen');
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+  );
 
   Widget _eventTitle(String eventTitle) {
     return Container(
