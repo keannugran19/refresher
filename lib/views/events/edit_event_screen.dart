@@ -218,6 +218,13 @@ class _EditEventScreenState extends State<EditEventScreen> {
         );
       }
     }
+    // validate date
+    if (selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Pick a date"), backgroundColor: Colors.red),
+      );
+      return;
+    }
   }
 
   // select date function

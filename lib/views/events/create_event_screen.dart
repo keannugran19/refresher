@@ -18,7 +18,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final TextEditingController eventDescriptionController =
       TextEditingController();
   final TextEditingController eventLocationController = TextEditingController();
-  final TextEditingController eventDateController = TextEditingController();
 
   // selectdate var
   DateTime? selectedDate;
@@ -36,7 +35,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     eventTitleController.dispose();
     eventDescriptionController.dispose();
     eventLocationController.dispose();
-    eventDateController.dispose();
     super.dispose();
   }
 
@@ -185,6 +183,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           ),
         );
       }
+    }
+    // validate date
+    if (selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Pick a date"), backgroundColor: Colors.red),
+      );
+      return;
     }
   }
 
