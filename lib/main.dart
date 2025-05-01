@@ -3,7 +3,6 @@ import 'package:refresher/constants/theme_data.dart';
 import 'package:refresher/views/auth/login_page.dart';
 import 'package:refresher/views/auth/register_page.dart';
 import 'package:refresher/views/events/create_event_screen.dart';
-import 'package:refresher/views/events/event_details_screen.dart';
 import 'package:refresher/views/events/event_list_screen.dart';
 import 'package:refresher/views/landing_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: 'splash_screen',
+      initialRoute: 'event_list_screen',
       routes: {
         'splash_screen': (context) => SplashScreen(),
         'login_page': (context) => LoginPageView(),

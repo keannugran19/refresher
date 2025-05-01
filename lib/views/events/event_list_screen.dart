@@ -15,24 +15,18 @@ class EventListScreen extends StatefulWidget {
 
 class _EventListScreenState extends State<EventListScreen> {
   Future<List<dynamic>>? _events;
+  // check if user is authenticated
+  bool isAuthenticated = false;
 
   @override
   void initState() {
     super.initState();
     _events = EventService.fetchEvents();
+    _checkAuthStatus();
   }
 
   @override
   Widget build(BuildContext context) {
-    // logout functionality
-    void logout() async {
-      await AuthService.logout();
-
-      if (context.mounted) {
-        Navigator.pushReplacementNamed(context, 'landing_page');
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
         shape: RoundedRectangleBorder(
@@ -95,7 +89,8 @@ class _EventListScreenState extends State<EventListScreen> {
           },
         ),
       ),
-      floatingActionButton: _floatingActionButton(),
+      floatingActionButton:
+          isAuthenticated == false ? Container() : _floatingActionButton(),
     );
   }
 
@@ -141,6 +136,26 @@ class _EventListScreenState extends State<EventListScreen> {
         },
       ),
     );
+  }
+
+  // logout functionality
+  void logout() async {
+    await AuthService.logout();
+
+    if (context.mounted) {
+      Navigator.pushReplacementNamed(context, 'landing_page');
+    }
+  }
+
+  // check if user is authenticated
+  Future<void> _checkAuthStatus() async {
+    bool isAuth = await AuthService.isAuthenticated();
+
+    if (isAuth) {
+      setState(() {
+        isAuthenticated = true;
+      });
+    }
   }
 
   // refresh events
