@@ -17,6 +17,8 @@ class _EventListScreenState extends State<EventListScreen> {
   Future<List<dynamic>>? _events;
   // check if user is authenticated
   bool isAuthenticated = false;
+  // search controller
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -101,44 +103,31 @@ class _EventListScreenState extends State<EventListScreen> {
   Widget _searchField() {
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 16),
-      child: SearchAnchor(
-        isFullScreen: false,
-        viewHintText: 'Search Event',
-        builder: (BuildContext context, SearchController controller) {
-          return SearchBar(
-            hintText: 'Search Event',
-            controller: controller,
-            padding: const WidgetStatePropertyAll<EdgeInsets>(
-              EdgeInsets.symmetric(horizontal: 16.0),
-            ),
-            onTap: () {
-              controller.openView();
-            },
-            onChanged: (_) {
-              controller.openView();
-            },
-            leading: const Icon(Icons.search),
-            trailing: <Widget>[],
-          );
-        },
-        suggestionsBuilder: (
-          BuildContext context,
-          SearchController controller,
-        ) {
-          return List<ListTile>.generate(5, (int index) {
-            final String item = 'item $index';
-            return ListTile(
-              title: Text(item),
-              onTap: () {
-                setState(() {
-                  controller.closeView(item);
-                });
-              },
-            );
-          });
-        },
+      child: TextField(
+        controller: searchController,
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.search),
+          filled: true,
+          fillColor: primaryFgColor,
+          hintText: 'Search events...',
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(100)),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide(color: secondaryColor, width: 2),
+          ),
+        ),
+        onSubmitted: (value) => _searchEvents(value),
       ),
     );
+  }
+
+  // search function
+  Future<void> _searchEvents(String query) async {
+    final data = await EventService.searchEvents(query);
+
+    setState(() {
+      _events = Future.value(data);
+    });
   }
 
   // redirect to user profile

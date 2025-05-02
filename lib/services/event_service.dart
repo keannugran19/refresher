@@ -21,6 +21,20 @@ class EventService {
     }
   }
 
+  // fetch searched events
+  static Future<List<dynamic>> searchEvents(String query) async {
+    final response = await http.get(
+      Uri.parse('${Config.apiBaseUrl}/events?query=$query'),
+      headers: {'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load events');
+    }
+  }
+
   // fetch specific event
   static Future<Map<String, dynamic>> fetchEvent(int eventId) async {
     try {
