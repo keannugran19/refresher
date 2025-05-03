@@ -54,19 +54,27 @@ class AuthService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("token", data["access_token"]);
       prefs.setInt("user_id", userId);
-    }
 
-    return data;
+      return data;
+    } else {
+      return {'success': false, 'error': data['error']};
+    }
   }
 
-  static Future<void> logout() async {
+  static Future<Map<String, dynamic>> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("token");
-    await http.post(
+    final response = await http.post(
       Uri.parse("${Config.apiBaseUrl}/logout"),
       headers: {"Authorization": "Bearer $token"},
     );
-    prefs.remove("token");
+
+    if (response.statusCode == 200) {
+      prefs.remove("token");
+      return {'success': true, 'message': 'Logged out successfully!'};
+    } else {
+      return {'success': false};
+    }
   }
 
   static Future<Map<String, dynamic>> getUserInfo() async {

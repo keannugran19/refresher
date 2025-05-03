@@ -64,16 +64,24 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ),
               TextButton(
                 onPressed: () async {
-                  await AuthService.logout();
+                  final result = await AuthService.logout();
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("You are successfully logged out"),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-
-                  Navigator.pushReplacementNamed(context, 'landing_page');
+                  if (result['success'] == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(result['message']),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.pushReplacementNamed(context, 'landing_page');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Failed to log out"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
                 child: const Text(
                   'Logout',

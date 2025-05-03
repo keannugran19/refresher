@@ -153,11 +153,11 @@ class _LoginPageViewState extends State<LoginPageView> {
           passwordController.text,
         );
 
-        if (result.containsKey("access_token")) {
+        if (result['success'] == true) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.green,
-              content: Text("Logged in successfully!"),
+              content: Text(result['message']),
             ),
           );
           Navigator.pushReplacementNamed(context, 'event_list_screen');
@@ -165,17 +165,12 @@ class _LoginPageViewState extends State<LoginPageView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.red,
-              content: Text("Invalid Credentials"),
+              content: Text(result['error']),
             ),
           );
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text("An error occurred"),
-          ),
-        );
+        throw Exception;
       }
     }
   }
