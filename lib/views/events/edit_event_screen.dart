@@ -67,8 +67,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) return const Center(child: CircularProgressIndicator());
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
@@ -91,69 +89,75 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   horizontal: cpSpace,
                   vertical: cpSpace,
                 ),
-                child: Column(
-                  spacing: cpSpace,
-                  children: [
-                    TextFormField(
-                      controller: eventTitleController,
-                      decoration: InputDecoration(
-                        border: outlineInputBorder,
-                        hintText: 'Enter event title...',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a title';
-                        }
-                        return null;
-                      },
-                    ),
-                    // event description field
-                    TextFormField(
-                      controller: eventDescriptionController,
-                      maxLines: 5,
-                      decoration: InputDecoration(
-                        border: outlineInputBorder,
-                        hintText: 'Enter event description...',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a title';
-                        }
-                        return null;
-                      },
-                    ),
-                    // event date picker
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black, width: 1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          selectedDate == null
-                              ? "Pick a date"
-                              : "Date: ${DateFormat('MMMM d, y').format(selectedDate!)}",
+                child:
+                    isLoading == true
+                        ? Center(child: CircularProgressIndicator())
+                        : Column(
+                          spacing: cpSpace,
+                          children: [
+                            TextFormField(
+                              controller: eventTitleController,
+                              decoration: InputDecoration(
+                                border: outlineInputBorder,
+                                hintText: 'Enter event title...',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a title';
+                                }
+                                return null;
+                              },
+                            ),
+                            // event description field
+                            TextFormField(
+                              controller: eventDescriptionController,
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                border: outlineInputBorder,
+                                hintText: 'Enter event description...',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a title';
+                                }
+                                return null;
+                              },
+                            ),
+                            // event date picker
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  selectedDate == null
+                                      ? "Pick a date"
+                                      : "Date: ${DateFormat('MMMM d, y').format(selectedDate!)}",
+                                ),
+                                trailing: Icon(Icons.calendar_today),
+                                onTap: _selectDate,
+                              ),
+                            ),
+                            // location field
+                            TextFormField(
+                              controller: eventLocationController,
+                              decoration: InputDecoration(
+                                border: outlineInputBorder,
+                                hintText: 'Enter event location...',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter event location';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
                         ),
-                        trailing: Icon(Icons.calendar_today),
-                        onTap: _selectDate,
-                      ),
-                    ),
-                    // location field
-                    TextFormField(
-                      controller: eventLocationController,
-                      decoration: InputDecoration(
-                        border: outlineInputBorder,
-                        hintText: 'Enter event location...',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter event location';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
               ),
             ],
           ),

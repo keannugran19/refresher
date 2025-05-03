@@ -23,9 +23,17 @@ class AuthService {
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 201) {
+      final userId = data['user_id'];
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString("token", data["access_token"]);
+      prefs.setInt("user_id", userId);
+
       return data;
+    } else if (response.statusCode == 422) {
+      return {'success': false, 'email': data['email']};
     } else {
-      throw Exception(data['message'] ?? 'Failed to register');
+      return {'success': false, 'message': data['message']};
     }
   }
 

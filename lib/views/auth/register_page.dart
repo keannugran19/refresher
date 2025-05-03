@@ -9,9 +9,6 @@ class RegisterPageView extends StatefulWidget {
   State<RegisterPageView> createState() => _RegisterPageViewState();
 }
 
-// when register now is pressed
-_login() {}
-
 class _RegisterPageViewState extends State<RegisterPageView> {
   // form key
   final _formKey = GlobalKey<FormState>();
@@ -168,27 +165,6 @@ class _RegisterPageViewState extends State<RegisterPageView> {
 
               // login button
               AppButton(onPressed: _registerButton, buttonText: "Register"),
-
-              // forgot password & remember
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Already have an account?",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  TextButton(
-                    onPressed: _login,
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
@@ -206,23 +182,24 @@ class _RegisterPageViewState extends State<RegisterPageView> {
           passwordController.text,
         );
 
-        if (result.containsValue("User registered successfully")) {
+        if (result['success'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green,
+              content: Text(result['message']),
+            ),
+          );
           Navigator.pushReplacementNamed(context, 'event_list_screen');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.red,
-              content: Text("Account creation failed"),
+              content: Text(result['email'] ?? result['message']),
             ),
           );
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text("Registration failed"),
-          ),
-        );
+        throw Exception;
       }
     }
   }

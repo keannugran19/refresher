@@ -25,28 +25,26 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: FutureBuilder(
-          future: AuthService.getUserInfo(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Error: ${snapshot.error}"));
-            } else {
-              final userInfo = snapshot.data!;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // header section
-                  _userNameHeader(userInfo['name']),
-                  // other information section
-                  _otherUserInfo(userInfo['email']),
-                ],
-              );
-            }
-          },
-        ),
+      body: FutureBuilder(
+        future: AuthService.getUserInfo(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else {
+            final userInfo = snapshot.data!;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // header section
+                _userNameHeader(userInfo['name']),
+                // other information section
+                _otherUserInfo(userInfo['email']),
+              ],
+            );
+          }
+        },
       ),
     );
   }

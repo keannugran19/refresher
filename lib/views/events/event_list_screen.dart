@@ -28,6 +28,12 @@ class _EventListScreenState extends State<EventListScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    searchController;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +67,11 @@ class _EventListScreenState extends State<EventListScreen> {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text("Error loading products"));
-            } else {
+            }
+            // else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            //   return hasNoData();
+            // }
+            else {
               final events = snapshot.data!;
               return ListView.builder(
                 itemCount: events.length,
@@ -154,8 +164,30 @@ class _EventListScreenState extends State<EventListScreen> {
   Future<void> _refreshEvents() async {
     setState(() {
       _events = EventService.fetchEvents();
+      searchController.text = '';
     });
   }
+
+  // display this widget when there is no data
+  // Widget hasNoData() {
+  //   return Center(
+  //     child: Column(
+  //       spacing: 20,
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         SvgPicture.asset('assets/svg/no-data.svg', height: 150, width: 150),
+  //         const Text(
+  //           "No Events",
+  //           style: TextStyle(
+  //             fontSize: 20,
+  //             color: primaryColor,
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // format date
   String formatDate(String mysqlDate) {

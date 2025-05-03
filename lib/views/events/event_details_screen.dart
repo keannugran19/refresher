@@ -64,32 +64,30 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             IconButton(onPressed: _deleteDialog, icon: Icon(Icons.delete)),
         ],
       ),
-      body: SingleChildScrollView(
-        child: FutureBuilder(
-          future: EventService.fetchEvent(widget.eventId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Error: ${snapshot.error}"));
-            } else {
-              final event = snapshot.data!;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // event title section
-                  _eventTitle(event['title']),
-                  // other information section
-                  _otherEventInfo(
-                    event['description'],
-                    event['location'],
-                    formatDate(event['date']),
-                  ),
-                ],
-              );
-            }
-          },
-        ),
+      body: FutureBuilder(
+        future: EventService.fetchEvent(widget.eventId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else {
+            final event = snapshot.data!;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // event title section
+                _eventTitle(event['title']),
+                // other information section
+                _otherEventInfo(
+                  event['description'],
+                  event['location'],
+                  formatDate(event['date']),
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }
