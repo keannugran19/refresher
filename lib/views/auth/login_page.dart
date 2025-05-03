@@ -9,9 +9,6 @@ class LoginPageView extends StatefulWidget {
   State<LoginPageView> createState() => _LoginPageViewState();
 }
 
-// when register now is pressed
-_registerNow() {}
-
 class _LoginPageViewState extends State<LoginPageView> {
   // form key
   final _formKey = GlobalKey<FormState>();
@@ -122,14 +119,11 @@ class _LoginPageViewState extends State<LoginPageView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Don't have an account?",
-                    style: TextStyle(fontSize: 12),
-                  ),
+                  Text("Log in later?", style: TextStyle(fontSize: 12)),
                   TextButton(
-                    onPressed: _registerNow,
+                    onPressed: _goToHome,
                     child: Text(
-                      "Register Now",
+                      "Go to Home Page",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -145,6 +139,11 @@ class _LoginPageViewState extends State<LoginPageView> {
     );
   }
 
+  // when register now is pressed
+  void _goToHome() {
+    Navigator.pushReplacementNamed(context, 'event_list_screen');
+  }
+
   // when login button is pressed
   void _loginButton() async {
     if (_formKey.currentState!.validate()) {
@@ -155,6 +154,12 @@ class _LoginPageViewState extends State<LoginPageView> {
         );
 
         if (result.containsKey("access_token")) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.green,
+              content: Text("Logged in successfully!"),
+            ),
+          );
           Navigator.pushReplacementNamed(context, 'event_list_screen');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
