@@ -77,7 +77,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("Failed to log out"),
+                        content: Text(result['message']),
                         backgroundColor: Colors.red,
                       ),
                     );

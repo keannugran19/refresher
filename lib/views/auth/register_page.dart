@@ -199,7 +199,7 @@ class _RegisterPageViewState extends State<RegisterPageView> {
           );
         }
       } catch (e) {
-        throw Exception;
+        throw Exception(e.toString());
       }
     }
   }

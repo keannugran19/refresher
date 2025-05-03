@@ -169,8 +169,8 @@ class _LoginPageViewState extends State<LoginPageView> {
             ),
           );
         }
-      } catch (e) {
-        throw Exception;
+      } on Exception catch (e) {
+        throw Exception(e.toString());
       }
     }
   }

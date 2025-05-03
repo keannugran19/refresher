@@ -16,22 +16,26 @@ class EventService {
       } else {
         throw Exception("Failed to load events: ${response.statusCode}");
       }
-    } catch (e) {
-      rethrow;
+    } on Exception catch (e) {
+      throw Exception(e.toString());
     }
   }
 
   // fetch searched events
   static Future<List<dynamic>> searchEvents(String query) async {
-    final response = await http.get(
-      Uri.parse('${Config.apiBaseUrl}/events?query=$query'),
-      headers: {'Accept': 'application/json'},
-    );
+    try {
+      final response = await http.get(
+        Uri.parse('${Config.apiBaseUrl}/events?query=$query'),
+        headers: {'Accept': 'application/json'},
+      );
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load events');
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load events');
+      }
+    } on Exception catch (e) {
+      throw Exception(e.toString());
     }
   }
 
@@ -49,8 +53,8 @@ class EventService {
       } else {
         throw Exception("Failed to load event: ${response.statusCode}");
       }
-    } catch (e) {
-      rethrow;
+    } on Exception catch (e) {
+      throw Exception(e.toString());
     }
   }
 
@@ -70,8 +74,8 @@ class EventService {
       );
 
       return response.statusCode == 201;
-    } catch (e) {
-      rethrow;
+    } on Exception catch (e) {
+      throw Exception(e.toString());
     }
   }
 
@@ -94,8 +98,8 @@ class EventService {
       );
 
       return response.statusCode == 201;
-    } catch (e) {
-      rethrow;
+    } on Exception catch (e) {
+      throw Exception(e.toString());
     }
   }
 
@@ -114,8 +118,8 @@ class EventService {
       );
 
       return response.statusCode == 201;
-    } catch (e) {
-      rethrow;
+    } on Exception catch (e) {
+      throw Exception(e.toString());
     }
   }
 }

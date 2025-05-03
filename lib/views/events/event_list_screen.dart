@@ -50,7 +50,10 @@ class _EventListScreenState extends State<EventListScreen> {
             icon: Icon(Icons.account_circle_outlined),
           ),
         ],
-        title: Text("Hola!"),
+        title: Text(
+          "refresher",
+          style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2),
+        ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(80),
           child: _searchField(),
