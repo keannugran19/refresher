@@ -163,13 +163,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   // pass the form
   Future<void> _createEvent() async {
-    // validate date
-    if (selectedDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Pick a date"), backgroundColor: Colors.red),
-      );
-      return;
-    }
     if (_formKey.currentState!.validate()) {
       final success = await EventService.addEvent({
         'title': eventTitleController.text.trim(),
@@ -190,6 +183,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           ),
         );
       }
+    }
+    // validate date
+    if (selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Pick a date"), backgroundColor: Colors.red),
+      );
+      return;
     }
   }
 
