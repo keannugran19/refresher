@@ -6,12 +6,8 @@ import 'package:refresher/views/auth/user_profile.dart';
 import 'package:refresher/views/events/create_event_screen.dart';
 import 'package:refresher/views/events/event_list_screen.dart';
 import 'package:refresher/views/landing_page.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:refresher/views/splash_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -25,7 +21,6 @@ class MyApp extends StatelessWidget {
       initialRoute: 'event_list_screen',
       routes: {
         'user_profile_screen': (context) => UserProfileScreen(),
-        'splash_screen': (context) => SplashScreen(),
         'login_page': (context) => LoginPageView(),
         'registration_page': (context) => RegisterPageView(),
         'event_list_screen': (context) => EventListScreen(),
