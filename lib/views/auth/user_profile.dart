@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:refresher/components/animated_route.dart';
 import 'package:refresher/constants/color_scheme.dart';
 import 'package:refresher/services/auth_service.dart';
+import 'package:refresher/views/landing_page.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -73,7 +75,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         backgroundColor: Colors.green,
                       ),
                     );
-                    Navigator.pushReplacementNamed(context, 'landing_page');
+                    Navigator.pushReplacement(
+                      context,
+                      AnimatedRoute(
+                        widget: LandingPageView(),
+                        offset: Offset(-1.0, 0.0),
+                      ),
+                    );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

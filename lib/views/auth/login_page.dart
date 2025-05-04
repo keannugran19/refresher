@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:refresher/components/animated_route.dart';
 import 'package:refresher/components/app_button.dart';
 import 'package:refresher/services/auth_service.dart';
+import 'package:refresher/views/events/event_list_screen.dart';
 
 class LoginPageView extends StatefulWidget {
   const LoginPageView({super.key});
@@ -141,7 +143,10 @@ class _LoginPageViewState extends State<LoginPageView> {
 
   // when register now is pressed
   void _goToHome() {
-    Navigator.pushReplacementNamed(context, 'event_list_screen');
+    Navigator.pushReplacement(
+      context,
+      AnimatedRoute(widget: EventListScreen(), offset: Offset(1.0, 0.0)),
+    );
   }
 
   // when login button is pressed
@@ -160,7 +165,10 @@ class _LoginPageViewState extends State<LoginPageView> {
               content: Text(result['message']),
             ),
           );
-          Navigator.pushReplacementNamed(context, 'event_list_screen');
+          Navigator.pushReplacement(
+            context,
+            AnimatedRoute(widget: EventListScreen(), offset: Offset(1.0, 0.0)),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:refresher/components/animated_route.dart';
 import 'package:refresher/components/event_card.dart';
 import 'package:refresher/constants/color_scheme.dart';
 import 'package:refresher/services/auth_service.dart';
 import 'package:refresher/services/event_service.dart';
+import 'package:refresher/views/auth/user_profile.dart';
+import 'package:refresher/views/events/create_event_screen.dart';
 import 'package:refresher/views/events/event_details_screen.dart';
+import 'package:refresher/views/landing_page.dart';
 
 class EventListScreen extends StatefulWidget {
   const EventListScreen({super.key});
@@ -145,11 +149,17 @@ class _EventListScreenState extends State<EventListScreen> {
 
   // redirect to user profile
   void _userProfile() {
-    Navigator.pushNamed(context, 'user_profile_screen');
+    Navigator.push(
+      context,
+      AnimatedRoute(widget: UserProfileScreen(), offset: Offset(1.0, 0.0)),
+    );
   }
 
   void _login() {
-    Navigator.pushReplacementNamed(context, 'landing_page');
+    Navigator.pushReplacement(
+      context,
+      AnimatedRoute(widget: LandingPageView(), offset: Offset(-1.0, 0.0)),
+    );
   }
 
   // check if user is authenticated
@@ -201,7 +211,10 @@ class _EventListScreenState extends State<EventListScreen> {
   Widget _floatingActionButton() {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.pushNamed(context, 'create_event_screen');
+        Navigator.push(
+          context,
+          AnimatedRoute(widget: CreateEventScreen(), offset: Offset(0.0, 1.0)),
+        );
       },
       child: Icon(Icons.create),
     );

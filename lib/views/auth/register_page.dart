@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:refresher/components/animated_route.dart';
 import 'package:refresher/components/app_button.dart';
 import 'package:refresher/services/auth_service.dart';
+import 'package:refresher/views/events/event_list_screen.dart';
 
 class RegisterPageView extends StatefulWidget {
   const RegisterPageView({super.key});
@@ -18,7 +20,7 @@ class _RegisterPageViewState extends State<RegisterPageView> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   // password visibility
-  bool isPasswordVisible = false;
+  bool isPasswordVisible = true;
 
   // reusable outline input border
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
@@ -189,7 +191,10 @@ class _RegisterPageViewState extends State<RegisterPageView> {
               content: Text(result['message']),
             ),
           );
-          Navigator.pushReplacementNamed(context, 'event_list_screen');
+          Navigator.pushReplacement(
+            context,
+            AnimatedRoute(widget: EventListScreen(), offset: Offset(1.0, 0.0)),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
